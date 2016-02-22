@@ -14,7 +14,10 @@ public class CheatActivity extends AppCompatActivity {
             "com.bignerdranch.android.geoquiz.answer_is_true";
     private static final String EXTRA_ANSWER_SHOWN =
             "com.bignerdranch.android.geoquiz.answer_shown";
+    private static final String Key_Rotated =
+            "com.bignerdranch.geoquiz.rotated";
 
+    private boolean answerWasShown;
     private boolean mAnswerIsTrue;
     private TextView mAnswerTextView;
     private Button mShowAnswer;
@@ -38,21 +41,31 @@ public class CheatActivity extends AppCompatActivity {
 
         mAnswerTextView = (TextView) findViewById(R.id.answer_text_view);
         mShowAnswer = (Button) findViewById(R.id.show_answer_button);
-        mShowAnswer.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mAnswerIsTrue) {
-                    mAnswerTextView.setText(R.string.true_button);
-                } else {
-                    mAnswerTextView.setText(R.string.false_button);
+        if (savedInstanceState == null) {
+            mShowAnswer.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    displayAnswer(mAnswerIsTrue);
                 }
-                setAnswerShownResult(true);
-            }
-        });
+            });
+        } else {
+            answerWasShown = savedInstanceState.getBoolean(Key_Rotated);
+            displayAnswer(mAnswerIsTrue);
+        }
     }
     private void setAnswerShownResult(boolean isAnswerShown){
+        answerWasShown = isAnswerShown;
         Intent data = new Intent();
         data.putExtra(EXTRA_ANSWER_SHOWN, isAnswerShown);
         setResult(RESULT_OK, data);
+    }
+
+    private void displayAnswer(boolean mAnswerIsTrue){
+        if (mAnswerIsTrue){
+            mAnswerTextView.setText(R.string.true_button);
+        }else{
+            mAnswerTextView.setText(R.string.false_button);
+        }
+        setAnswerShownResult(true);
     }
 }
